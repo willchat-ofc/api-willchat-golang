@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/willchat-ofc/api-willchat-golang/internal/utils"
 )
@@ -12,10 +12,11 @@ func VerifyAccessToken(next http.Handler) http.Handler {
 		authorization := r.Header.Get("Authorization")
 
 		if authorization == "" {
-			fmt.Println("deu erro vazio")
 			http.Error(w, "Missing or invalid access token", http.StatusUnauthorized)
 			return
 		}
+
+		authorization = strings.TrimPrefix(authorization, "Bearer ")
 
 		_, claims, err := utils.NewCreateAccessTokenUtil().Validate(authorization)
 
