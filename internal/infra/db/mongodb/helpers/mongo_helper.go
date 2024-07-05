@@ -22,5 +22,5 @@ func MongoHelper() *mongo.Database {
 		log.Fatal(err)
 	}
 
-	return client.Database("tasker")
+	return client.Database("database")
 }

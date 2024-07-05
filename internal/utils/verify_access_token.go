@@ -15,7 +15,7 @@ func NewCreateAccessTokenUtil() *CreateAccessTokenUtil {
 func (b *CreateAccessTokenUtil) Validate(accessToken string) (*jwt.Token, jwt.MapClaims, error) {
 	claims := jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(accessToken, claims, func(token *jwt.Token) (interface{}, error) {
-		return os.Getenv("SECRET_JWT"), nil
+		return []byte(os.Getenv("SECRET_JWT")), nil
 	})
 	return token, claims, err
 }

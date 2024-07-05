@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	port := ":8080"
+	port := ":7070"
 	config.LoadEnvFile(".env")
 
 	fmt.Println("server is running with port", port)
