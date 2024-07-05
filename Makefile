@@ -7,7 +7,7 @@ run:
 	go auth
 
 test:
-	go test ./test/..._test -v
+	go test ./tests/..._test -v
 
 coverage:
 	go test -coverprofile=coverage.out ./internal/presentation/controllers/... ./internal/data/usecase/... ./internal/infra/db/postgreSQL/... ./internal/utils/... ./test/...
