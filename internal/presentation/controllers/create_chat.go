@@ -27,7 +27,9 @@ type CreateChatControllerResponse struct {
 func (c *CreateChatController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
 	chat, err := c.CreateChat.Create(r.Header.Get("UserId"))
 	if err != nil {
-		return helpers.CreateResponse("an error ocurred when creating chat", http.StatusInternalServerError)
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "an error ocurred when creating chat",
+		}, http.StatusInternalServerError)
 	}
 
 	return helpers.CreateResponse(&CreateChatControllerResponse{

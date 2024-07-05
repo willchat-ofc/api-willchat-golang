@@ -2,6 +2,7 @@ package controllers_test
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -59,6 +60,17 @@ func TestCreateChatController(t *testing.T) {
 			CreatedAt: "fake-created-at",
 		}
 		require.Equal(t, &responseBody, correctSignInControllerResponse)
-
 	})
+
+	t.Run("CreateChatError", func(t *testing.T) {
+		sut, createChat, ctrl := setupCreateChatMocks(t)
+		defer ctrl.Finish()
+
+		createChat.EXPECT().Create("fake-user-id").Return(nil, errors.New("fake-error"))
+
+		res := sut.Handle(createCreateChatHttpRequest())
+
+		verifyHttpResponse(t, res, http.StatusInternalServerError, "an error ocurred when creating chat")
+	})
+
 }
