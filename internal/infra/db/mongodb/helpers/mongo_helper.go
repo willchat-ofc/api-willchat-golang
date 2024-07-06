@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,8 @@ func MongoHelper() *mongo.Database {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("MongoDB connection established")
 
 	return client.Database("database")
 }

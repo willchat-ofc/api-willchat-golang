@@ -9,8 +9,10 @@ type DbGetAllChatsByOwnerId struct {
 	GetAllChatsByOwnerIdRepository protocols.GetAllChatsByOwnerIdRepository
 }
 
-func NewDbGetAllChatsByOwnerId() *DbGetAllChatsByOwnerId {
-	return &DbGetAllChatsByOwnerId{}
+func NewDbGetAllChatsByOwnerId(getAllChatsByOwnerIdRepository protocols.GetAllChatsByOwnerIdRepository) *DbGetAllChatsByOwnerId {
+	return &DbGetAllChatsByOwnerId{
+		GetAllChatsByOwnerIdRepository: getAllChatsByOwnerIdRepository,
+	}
 }
 
 func (c *DbGetAllChatsByOwnerId) Get(ownerId string) ([]*usecase.GetAllChatsByOwnerIdOutput, error) {
