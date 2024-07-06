@@ -11,15 +11,17 @@ import (
 )
 
 type CreateChatMongoRepository struct {
-	db *mongo.Database
+	Db *mongo.Database
 }
 
-func NewCreateChatRepository() *CreateChatMongoRepository {
-	return &CreateChatMongoRepository{}
+func NewCreateChatMongoRepository(db *mongo.Database) *CreateChatMongoRepository {
+	return &CreateChatMongoRepository{
+		Db: db,
+	}
 }
 
 func (c *CreateChatMongoRepository) Create(ownerId string) (*protocols.CreateChatRepositoryOutput, error) {
-	collection := c.db.Collection("chat")
+	collection := c.Db.Collection("chat")
 
 	id := uuid.New().String()
 	createdAt := time.Now()
