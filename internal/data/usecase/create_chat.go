@@ -9,8 +9,10 @@ type DbCreateChat struct {
 	CreateChatRepository protocols.CreateChatRepository
 }
 
-func NewDbCreateChat() *DbCreateChat {
-	return &DbCreateChat{}
+func NewDbCreateChat(createChatRepository protocols.CreateChatRepository) *DbCreateChat {
+	return &DbCreateChat{
+		CreateChatRepository: createChatRepository,
+	}
 }
 
 func (c *DbCreateChat) Create(ownerId string) (*usecase.CreateChatOutput, error) {
