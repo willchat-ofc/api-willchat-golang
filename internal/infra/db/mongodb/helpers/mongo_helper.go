@@ -8,16 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var ctx = context.TODO()
+var Ctx = context.TODO()
 
 func MongoHelper() *mongo.Database {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
-	client, err := mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(Ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = client.Ping(ctx, nil)
+	err = client.Ping(Ctx, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
