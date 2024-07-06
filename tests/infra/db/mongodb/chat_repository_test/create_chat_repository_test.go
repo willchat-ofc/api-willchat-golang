@@ -28,4 +28,13 @@ func TestCreateChatMongoRepository(t *testing.T) {
 		require.Equal(t, chatData.OwnerId, "fake-user-id")
 		require.NotEmpty(t, chatData.CreatedAt)
 	})
+
+	t.Run("Error", func(t *testing.T) {
+		sut, teardown := setupCreateChatMongoRepositoryMocks(t)
+		teardown()
+
+		chatData, err := sut.Create("fake-error")
+		require.Error(t, err)
+		require.Nil(t, chatData)
+	})
 }
