@@ -6,10 +6,11 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"github.com/willchat-ofc/api-willchat-golang/internal/data/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/internal/data/usecase"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
 
-	usecaseDomain "github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
+	domainUsecase "github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 )
 
 func setupCreateChatRepositoryMocks(t *testing.T) (*usecase.DbCreateChat, *mocks.MockCreateChatRepository, *gomock.Controller) {
@@ -25,7 +26,7 @@ func TestDbCreateChat(t *testing.T) {
 		sut, createChatRepository, ctrl := setupCreateChatRepositoryMocks(t)
 		defer ctrl.Finish()
 
-		chatData := &usecaseDomain.CreateChatOutput{
+		chatData := &protocols.CreateChatRepositoryOutput{
 			Id:        "fake-chat-id",
 			OwnerId:   "fake-user-id",
 			CreatedAt: "fake-created-at",
@@ -34,8 +35,14 @@ func TestDbCreateChat(t *testing.T) {
 		createChatRepository.EXPECT().Create("fake-user-id").Return(chatData, nil)
 		res, err := sut.Create("fake-user-id")
 
+		expectedOutput := &domainUsecase.CreateChatOutput{
+			Id:        "fake-chat-id",
+			OwnerId:   "fake-user-id",
+			CreatedAt: "fake-created-at",
+		}
+
 		require.NoError(t, err)
-		require.Equal(t, res, chatData)
+		require.Equal(t, res, expectedOutput)
 	})
 
 	t.Run("CreateChatRepositoryError", func(t *testing.T) {
