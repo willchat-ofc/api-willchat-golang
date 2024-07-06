@@ -45,4 +45,13 @@ func TestGetAllChatsByOwnerIdRepository(t *testing.T) {
 		require.Len(t, chats, 1)
 		require.Equal(t, chats[0].OwnerId, "fake-owner-id")
 	})
+
+	t.Run("Error", func(t *testing.T) {
+		sut, teardown := setupGetAllChatsByOwnerIdRepositoryMocks(t)
+		teardown()
+
+		chatData, err := sut.Get("fake-owner-id")
+		require.Error(t, err)
+		require.Nil(t, chatData)
+	})
 }
