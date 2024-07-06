@@ -2,7 +2,6 @@ package chat_repository_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -30,8 +29,6 @@ func insertFakeChatsToGet(db *mongo.Database) {
 		OwnerId:   "fake-owner-id",
 	}
 	collection.InsertOne(context.TODO(), fakeChat)
-
-	fmt.Println("rodouuuuuuuuuuuuUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
 }
 
 func TestGetAllChatsByOwnerIdRepository(t *testing.T) {
