@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -35,5 +36,16 @@ func TestDbCreateChat(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Equal(t, res, chatData)
+	})
+
+	t.Run("CreateChatRepositoryError", func(t *testing.T) {
+		sut, createChatRepository, ctrl := setupCreateChatRepositoryMocks(t)
+		defer ctrl.Finish()
+
+		createChatRepository.EXPECT().Create("fake-user-id").Return(nil, errors.New("fake-error"))
+		res, err := sut.Create("fake-user-id")
+
+		require.Error(t, err)
+		require.Nil(t, res)
 	})
 }
