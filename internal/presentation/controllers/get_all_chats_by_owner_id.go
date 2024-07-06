@@ -12,6 +12,10 @@ type GetAllChatsByOwnerIdController struct {
 	GetAllChatsByOwnerId usecase.GetAllChatsByOwnerId
 }
 
+type GetAllChatsByOwnerIdControllerResponse struct {
+	Chats []*usecase.GetAllChatsByOwnerIdOutput `json:"chats"`
+}
+
 func NewGetAllChatsByOwnerIdController(getAllChatsByOwnerId usecase.GetAllChatsByOwnerId) *GetAllChatsByOwnerIdController {
 	return &GetAllChatsByOwnerIdController{
 		GetAllChatsByOwnerId: getAllChatsByOwnerId,
@@ -29,5 +33,7 @@ func (c *GetAllChatsByOwnerIdController) Handle(r presentationProtocols.HttpRequ
 		}, http.StatusInternalServerError)
 	}
 
-	return helpers.CreateResponse(chats, http.StatusOK)
+	return helpers.CreateResponse(&GetAllChatsByOwnerIdControllerResponse{
+		Chats: chats,
+	}, http.StatusOK)
 }
