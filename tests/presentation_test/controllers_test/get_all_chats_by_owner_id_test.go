@@ -2,6 +2,7 @@ package controllers_test
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -59,5 +60,16 @@ func TestGetAllChatsByOwnerId(t *testing.T) {
 			Chats: getAllChatsByOwnerIdResponseSlice,
 		}
 		require.Equal(t, &responseBody, correctGetAllChatsByOwnerIdResponse)
+	})
+
+	t.Run("GetAllChatsByOwnerIdError", func(t *testing.T) {
+		sut, getAllChatsByOwnerId, ctrl := setupGetAllChatsByOwnerIdMocks(t)
+		defer ctrl.Finish()
+
+		getAllChatsByOwnerId.EXPECT().Get("fake-user-id").Return(nil, errors.New("fake-error"))
+
+		res := sut.Handle(createGetAllChatsByOwnerIdHttpRequest())
+
+		verifyHttpResponse(t, res, http.StatusInternalServerError, "an error ocurred while finding chats")
 	})
 }
