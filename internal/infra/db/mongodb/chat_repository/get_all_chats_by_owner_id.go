@@ -21,7 +21,7 @@ func NewGetAllChatsByOwnerIdMongoRepository(db *mongo.Database) *GetAllChatsByOw
 func (c *GetAllChatsByOwnerIdMongoRepository) Get(ownerId string) ([]*protocols.GetAllChatsByOwnerIdRepositoryOutput, error) {
 	collection := c.Db.Collection("chat")
 
-	filter := bson.D{{Key: "ownerId", Value: ownerId}}
+	filter := bson.D{{Key: "owner_id", Value: ownerId}}
 
 	cursor, err := collection.Find(helpers.Ctx, filter)
 
