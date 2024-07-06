@@ -52,14 +52,11 @@ func TestGetAllChatsByOwnerId(t *testing.T) {
 
 		res := sut.Handle(createGetAllChatsByOwnerIdHttpRequest())
 
-		var responseBody controllers.GetAllChatsByOwnerIdControllerResponse
+		var responseBody []*usecase.GetAllChatsByOwnerIdOutput
 		err := json.NewDecoder(res.Body).Decode(&responseBody)
 		require.NoError(t, err)
 
-		correctGetAllChatsByOwnerIdResponse := &controllers.GetAllChatsByOwnerIdControllerResponse{
-			Chats: getAllChatsByOwnerIdResponseSlice,
-		}
-		require.Equal(t, &responseBody, correctGetAllChatsByOwnerIdResponse)
+		require.Equal(t, &responseBody, &getAllChatsByOwnerIdResponseSlice)
 	})
 
 	t.Run("GetAllChatsByOwnerIdError", func(t *testing.T) {
