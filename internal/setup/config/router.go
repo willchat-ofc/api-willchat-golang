@@ -10,4 +10,5 @@ import (
 func SetupRoutes(server *http.ServeMux, db *mongo.Database) {
 	routes.CreateChat(server, db)
 	routes.GetAllChatsByOwner(server, db)
+	routes.DeleteChat(server, db)
 }
