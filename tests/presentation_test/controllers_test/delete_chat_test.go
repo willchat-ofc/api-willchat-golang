@@ -100,7 +100,7 @@ func TestDeleteChatController(t *testing.T) {
 		verifyHttpResponse(t, res, http.StatusForbidden, "you do not have this chat")
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("DeleteChatByIdError", func(t *testing.T) {
 		sut, getAllChatsByOwnerId, deleteChatById, ctrl := setupDeleteChatControllerMocks(t)
 		defer ctrl.Finish()
 
