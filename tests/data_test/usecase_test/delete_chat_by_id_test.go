@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -30,5 +31,16 @@ func TestDbDeleteChatById(t *testing.T) {
 
 		err := sut.Delete("fake-chat-id")
 		require.NoError(t, err)
+	})
+
+	t.Run("DeleteChatByIdRepositoryError", func(t *testing.T) {
+		sut, deleteChatByIdRepository, ctrl := setupDeleteChatByIdRequest(t)
+		defer ctrl.Finish()
+
+		deleteChatByIdRepository.EXPECT().Delete("fake-chat-id").Return(errors.New("fake-error"))
+
+		err := sut.Delete("fake-chat-id")
+		require.Error(t, err)
+		require.EqualError(t, err, "fake-error")
 	})
 }
