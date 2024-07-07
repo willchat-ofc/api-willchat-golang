@@ -32,16 +32,14 @@ func (c *DeleteChatController) Handle(r presentationProtocols.HttpRequest) *pres
 		}, http.StatusInternalServerError)
 	}
 
-	isCorrectChat := false
-
 	chatId := r.UrlParams.Get("id")
-
 	if _, err := uuid.Parse(chatId); err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "invalid chat id format",
 		}, http.StatusBadRequest)
 	}
 
+	isCorrectChat := false
 	for _, chat := range chats {
 		if chat.Id == chatId {
 			isCorrectChat = true
