@@ -99,4 +99,26 @@ func TestDeleteChatController(t *testing.T) {
 
 		verifyHttpResponse(t, res, http.StatusForbidden, "you do not have this chat")
 	})
+
+	t.Run("Success", func(t *testing.T) {
+		sut, getAllChatsByOwnerId, deleteChatById, ctrl := setupDeleteChatControllerMocks(t)
+		defer ctrl.Finish()
+
+		getAllChatsByOwnerIdResponse := &usecase.GetAllChatsByOwnerIdOutput{
+			Id:        "fake-chat-id",
+			CreatedAt: "fake-date",
+			OwnerId:   "fake-owner-id",
+		}
+
+		var getAllChatsByOwnerIdResponseSlice []*usecase.GetAllChatsByOwnerIdOutput
+		getAllChatsByOwnerIdResponseSlice = append(getAllChatsByOwnerIdResponseSlice, getAllChatsByOwnerIdResponse)
+		getAllChatsByOwnerIdResponseSlice = append(getAllChatsByOwnerIdResponseSlice, getAllChatsByOwnerIdResponse)
+
+		getAllChatsByOwnerId.EXPECT().Get("fake-owner-id").Return(getAllChatsByOwnerIdResponseSlice, nil)
+		deleteChatById.EXPECT().Delete("fake-chat-id").Return(errors.New("fake-error"))
+
+		res := sut.Handle(createDeleteChatHttpRequest())
+
+		verifyHttpResponse(t, res, http.StatusInternalServerError, "an error ocurred while deleting chat")
+	})
 }
