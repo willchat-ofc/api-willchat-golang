@@ -13,10 +13,17 @@ type DeleteChatController struct {
 	DeleteChatById       usecase.DeleteChatById
 }
 
-func (c *DeleteChatController) Handle(r *presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
+func NewDeleteChatController(getAllChatsByOwnerId usecase.GetAllChatsByOwnerId, deleteChatById usecase.DeleteChatById) *DeleteChatController {
+	return &DeleteChatController{
+		GetAllChatsByOwnerId: getAllChatsByOwnerId,
+		DeleteChatById:       deleteChatById,
+	}
+}
+
+func (c *DeleteChatController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
 	ownerId := r.Header.Get("UserId")
 
-	chats, err := c.GetAllChatsByOwnerId.Get(r.Header.Get(ownerId))
+	chats, err := c.GetAllChatsByOwnerId.Get(ownerId)
 
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
