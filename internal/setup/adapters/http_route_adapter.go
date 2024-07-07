@@ -10,8 +10,9 @@ import (
 func AdaptRoute(controller protocols.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		httpRequest := &protocols.HttpRequest{
-			Body:   r.Body,
-			Header: r.Header,
+			Body:      r.Body,
+			Header:    r.Header,
+			UrlParams: r.URL.Query(),
 		}
 
 		res := controller.Handle(*httpRequest)
