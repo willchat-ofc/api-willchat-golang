@@ -1,7 +1,8 @@
-package controllers
+package controllers_test
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 	"testing"
@@ -66,5 +67,16 @@ func TestDeleteChatController(t *testing.T) {
 		correctDeleteChatControllerResponse := &controllers.CreateChatControllerResponse{}
 		require.Equal(t, &responseBody, correctDeleteChatControllerResponse)
 		require.Equal(t, res.StatusCode, http.StatusNoContent)
+	})
+
+	t.Run("GetAllChatsByOwnerIdError", func(t *testing.T) {
+		sut, getAllChatsByOwnerId, _, ctrl := setupDeleteChatControllerMocks(t)
+		defer ctrl.Finish()
+
+		getAllChatsByOwnerId.EXPECT().Get("fake-owner-id").Return(nil, errors.New("fake-error"))
+
+		res := sut.Handle(createDeleteChatHttpRequest())
+
+		verifyHttpResponse(t, res, http.StatusInternalServerError, "an error ocurred while getting chats")
 	})
 }
