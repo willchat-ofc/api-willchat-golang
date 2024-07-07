@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/helpers"
 	presentationProtocols "github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
@@ -34,6 +35,12 @@ func (c *DeleteChatController) Handle(r presentationProtocols.HttpRequest) *pres
 	isCorrectChat := false
 
 	chatId := r.UrlParams.Get("id")
+
+	if _, err := uuid.Parse(chatId); err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "invalid chat id format",
+		}, http.StatusBadRequest)
+	}
 
 	for _, chat := range chats {
 		if chat.Id == chatId {
