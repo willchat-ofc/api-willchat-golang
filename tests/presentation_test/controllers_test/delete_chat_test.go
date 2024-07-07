@@ -31,7 +31,7 @@ func createDeleteChatHttpRequest() protocols.HttpRequest {
 	header.Add("UserId", "fake-owner-id")
 
 	urlParams := url.Values{}
-	urlParams.Set("id", "fake-chat-id")
+	urlParams.Set("id", "49e44949-cdd4-4a80-960b-297905c5d514")
 
 	return protocols.HttpRequest{
 		Body:      nil,
@@ -46,7 +46,7 @@ func TestDeleteChatController(t *testing.T) {
 		defer ctrl.Finish()
 
 		getAllChatsByOwnerIdResponse := &usecase.GetAllChatsByOwnerIdOutput{
-			Id:        "fake-chat-id",
+			Id:        "49e44949-cdd4-4a80-960b-297905c5d514",
 			CreatedAt: "fake-date",
 			OwnerId:   "fake-owner-id",
 		}
@@ -56,7 +56,7 @@ func TestDeleteChatController(t *testing.T) {
 		getAllChatsByOwnerIdResponseSlice = append(getAllChatsByOwnerIdResponseSlice, getAllChatsByOwnerIdResponse)
 
 		getAllChatsByOwnerId.EXPECT().Get("fake-owner-id").Return(getAllChatsByOwnerIdResponseSlice, nil)
-		deleteChatById.EXPECT().Delete("fake-chat-id").Return(nil)
+		deleteChatById.EXPECT().Delete("49e44949-cdd4-4a80-960b-297905c5d514").Return(nil)
 
 		res := sut.Handle(createDeleteChatHttpRequest())
 
@@ -85,7 +85,7 @@ func TestDeleteChatController(t *testing.T) {
 		defer ctrl.Finish()
 
 		getAllChatsByOwnerIdResponse := &usecase.GetAllChatsByOwnerIdOutput{
-			Id:        "other-fake-chat-id",
+			Id:        "other-49e44949-cdd4-4a80-960b-297905c5d514",
 			CreatedAt: "fake-date",
 			OwnerId:   "fake-id",
 		}
@@ -105,7 +105,7 @@ func TestDeleteChatController(t *testing.T) {
 		defer ctrl.Finish()
 
 		getAllChatsByOwnerIdResponse := &usecase.GetAllChatsByOwnerIdOutput{
-			Id:        "fake-chat-id",
+			Id:        "49e44949-cdd4-4a80-960b-297905c5d514",
 			CreatedAt: "fake-date",
 			OwnerId:   "fake-owner-id",
 		}
@@ -115,7 +115,7 @@ func TestDeleteChatController(t *testing.T) {
 		getAllChatsByOwnerIdResponseSlice = append(getAllChatsByOwnerIdResponseSlice, getAllChatsByOwnerIdResponse)
 
 		getAllChatsByOwnerId.EXPECT().Get("fake-owner-id").Return(getAllChatsByOwnerIdResponseSlice, nil)
-		deleteChatById.EXPECT().Delete("fake-chat-id").Return(errors.New("fake-error"))
+		deleteChatById.EXPECT().Delete("49e44949-cdd4-4a80-960b-297905c5d514").Return(errors.New("fake-error"))
 
 		res := sut.Handle(createDeleteChatHttpRequest())
 
