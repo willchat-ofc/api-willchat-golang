@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -41,5 +42,15 @@ func TestDbGetAllChatsById(t *testing.T) {
 		require.Equal(t, chatData[0].Id, "fake-id")
 		require.Equal(t, chatData[0].CreatedAt, "fake-date")
 		require.Equal(t, chatData[0].OwnerId, "fake-owner-id")
+	})
+
+	t.Run("GetAllChatsByOwnerIdRepositoryError", func(t *testing.T) {
+		sut, getAllChatsByOwnerIdRepository, ctrl := setupDbGetAllChatsByOwnerIdMocks(t)
+		defer ctrl.Finish()
+
+		getAllChatsByOwnerIdRepository.EXPECT().Get("fake-owner-id").Return(nil, errors.New("fake-error"))
+
+		_, err := sut.Get("fake-owner-id")
+		require.Error(t, err)
 	})
 }
