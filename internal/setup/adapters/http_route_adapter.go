@@ -20,7 +20,6 @@ func AdaptRoute(controller protocols.Controller) http.Handler {
 		w.WriteHeader(res.StatusCode)
 		_, err := io.Copy(w, res.Body)
 		if err != nil {
-			http.Error(w, "Failed to write response body", http.StatusInternalServerError)
 			return
 		}
 	})
