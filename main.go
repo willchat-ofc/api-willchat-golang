@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/willchat-ofc/api-willchat-golang/internal/setup"
@@ -12,11 +12,11 @@ func main() {
 	port := ":7070"
 	config.LoadEnvFile(".env")
 
-	fmt.Println("server is running with port", port)
+	log.Println("server is running with port", port)
 
 	err := http.ListenAndServe(port, setup.Server())
 
 	if err != nil {
-		fmt.Println("error ocurred: ", err.Error())
+		log.Println("error ocurred: ", err.Error())
 	}
 }
