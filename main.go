@@ -18,7 +18,7 @@ func main() {
 	sm := http.Server{
 		Addr:         port,
 		Handler:      setup.Server(),
-		IdleTimeout:  100 * time.Second,
+		IdleTimeout:  60 * time.Second,
 		ReadTimeout:  1 * time.Second,
 		WriteTimeout: 1 * time.Second,
 	}
