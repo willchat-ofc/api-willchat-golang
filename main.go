@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/willchat-ofc/api-willchat-golang/internal/setup"
 	"github.com/willchat-ofc/api-willchat-golang/internal/setup/config"
@@ -14,9 +15,13 @@ func main() {
 
 	log.Println("server is running with port", port)
 
-	err := http.ListenAndServe(port, setup.Server())
-
-	if err != nil {
-		log.Println("error ocurred: ", err.Error())
+	sm := http.Server{
+		Addr:         port,
+		Handler:      setup.Server(),
+		IdleTimeout:  100 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
 	}
+
+	sm.ListenAndServe()
 }
