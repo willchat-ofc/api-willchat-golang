@@ -9,7 +9,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
-	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers"
+	controllers "github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers/chat"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
 )

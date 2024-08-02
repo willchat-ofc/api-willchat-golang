@@ -3,7 +3,7 @@ package factory
 import (
 	"github.com/willchat-ofc/api-willchat-golang/internal/data/usecase"
 	"github.com/willchat-ofc/api-willchat-golang/internal/infra/db/mongodb/chat_repository"
-	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers"
+	controllers "github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers/chat"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
