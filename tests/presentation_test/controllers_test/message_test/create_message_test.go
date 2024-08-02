@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -54,5 +55,19 @@ func TestCreateMessageController(t *testing.T) {
 		res := sut.Handle(createCreateMessageHttpRequest(t))
 
 		verifyHttpResponse(t, res, http.StatusInternalServerError, "an error ocurred while getting chats")
+	})
+
+	t.Run("InvalidBodyRequest", func(t *testing.T) {
+		signUpController, _, ctrl := setupCreateMessageMocks(t)
+		defer ctrl.Finish()
+
+		httpRequest := &protocols.HttpRequest{
+			Body:   io.NopCloser(strings.NewReader("{invalid json")),
+			Header: nil,
+		}
+
+		httpResponse := signUpController.Handle(*httpRequest)
+
+		verifyHttpResponse(t, httpResponse, http.StatusBadRequest, "invalid body request")
 	})
 }

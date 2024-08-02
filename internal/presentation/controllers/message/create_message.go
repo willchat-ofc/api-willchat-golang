@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
@@ -34,9 +35,17 @@ type CreateMessageControllerBody struct {
 }
 
 func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
+	var body CreateMessageControllerBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "invalid body request",
+		}, http.StatusBadRequest)
+	}
+
 	ownerId := r.Header.Get("UserId")
 
-	_, err := c.GetAllChatsByOwnerId.Get(ownerId)
+	_, err = c.GetAllChatsByOwnerId.Get(ownerId)
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "an error ocurred while getting chats",
