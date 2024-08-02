@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 	controllers "github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers/message"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
@@ -69,5 +70,19 @@ func TestCreateMessageController(t *testing.T) {
 		httpResponse := signUpController.Handle(*httpRequest)
 
 		verifyHttpResponse(t, httpResponse, http.StatusBadRequest, "invalid body request")
+	})
+
+	t.Run("OwnerDoNotHaveThisChat", func(t *testing.T) {
+		sut, getAllChatsByOwnerId, ctrl := setupCreateMessageMocks(t)
+		defer ctrl.Finish()
+
+		getAllChatsByOwnerId.EXPECT().Get(fakeUserId).Return([]*usecase.GetAllChatsByOwnerIdOutput{{
+			Id:        "other-49e44949-cdd4-4a80-960b-297905c5d514",
+			CreatedAt: "fake-date",
+		}}, nil)
+
+		res := sut.Handle(createCreateMessageHttpRequest(t))
+
+		verifyHttpResponse(t, res, http.StatusForbidden, "you do not have this chat")
 	})
 }
