@@ -45,13 +45,3 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 
 	return nil
 }
-
-func isThereOwnerChat(chats []*usecase.GetAllChatsByOwnerIdOutput, chatId string) bool {
-	for _, chat := range chats {
-		if chat.Id == chatId {
-			return true
-		}
-	}
-
-	return false
-}
