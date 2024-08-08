@@ -43,21 +43,6 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		}, http.StatusBadRequest)
 	}
 
-	ownerId := r.Header.Get("UserId")
-
-	chats, err := c.GetAllChatsByOwnerId.Get(ownerId)
-	if err != nil {
-		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
-			Error: "an error ocurred while getting chats",
-		}, http.StatusInternalServerError)
-	}
-
-	if !isThereOwnerChat(chats, body.ChatId) {
-		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
-			Error: "you do not have this chat",
-		}, http.StatusForbidden)
-	}
-
 	return nil
 }
 
