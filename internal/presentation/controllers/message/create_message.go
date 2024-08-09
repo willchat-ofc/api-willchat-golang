@@ -38,21 +38,19 @@ type CreateMessageControllerBody struct {
 
 func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
 	var body CreateMessageControllerBody
-	err := json.NewDecoder(r.Body).Decode(&body)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "invalid body request",
 		}, http.StatusBadRequest)
 	}
 
-	_, err = c.FindChatById.Find(body.ChatId)
-	if err != nil {
+	if _, err := c.FindChatById.Find(body.ChatId); err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "chat not found",
 		}, http.StatusNotFound)
 	}
 
-	_, err = c.CreateMessage.Create(&usecase.CreateMessageInput{
+	_, err := c.CreateMessage.Create(&usecase.CreateMessageInput{
 		ChatId:     body.ChatId,
 		Message:    body.Message,
 		AuthorName: body.AuthorName,
