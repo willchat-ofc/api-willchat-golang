@@ -12,13 +12,14 @@ import (
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
 )
 
-func setupCreateMessageMocks(t *testing.T) (*controllers.CreateMessageController, *mocks.MockGetAllChatsByOwnerId, *gomock.Controller) {
+func setupCreateMessageMocks(t *testing.T) (*controllers.CreateMessageController, *mocks.MockFindChatById, *gomock.Controller) {
 	ctrl := gomock.NewController(t)
 
-	mockGetAllChatsByOwnerId := mocks.NewMockGetAllChatsByOwnerId(ctrl)
-	sut := controllers.NewCreateMessageController(mockGetAllChatsByOwnerId)
+	mockFindChatById := mocks.NewMockFindChatById(ctrl)
 
-	return sut, mockGetAllChatsByOwnerId, ctrl
+	sut := controllers.NewCreateMessageController(mockFindChatById)
+
+	return sut, mockFindChatById, ctrl
 }
 
 // func createCreateMessageHttpRequest(t *testing.T) protocols.HttpRequest {

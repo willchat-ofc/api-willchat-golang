@@ -10,12 +10,12 @@ import (
 )
 
 type CreateMessageController struct {
-	GetAllChatsByOwnerId usecase.GetAllChatsByOwnerId
+	findChatById usecase.FindChatById
 }
 
-func NewCreateMessageController(getAllChatsByOwnerId usecase.GetAllChatsByOwnerId) *CreateMessageController {
+func NewCreateMessageController(findChatById usecase.FindChatById) *CreateMessageController {
 	return &CreateMessageController{
-		GetAllChatsByOwnerId: getAllChatsByOwnerId,
+		findChatById: findChatById,
 	}
 }
 
