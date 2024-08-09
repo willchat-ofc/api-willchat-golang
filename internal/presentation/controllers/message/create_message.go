@@ -50,7 +50,7 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		}, http.StatusNotFound)
 	}
 
-	_, err := c.CreateMessage.Create(&usecase.CreateMessageInput{
+	message, err := c.CreateMessage.Create(&usecase.CreateMessageInput{
 		ChatId:     body.ChatId,
 		Message:    body.Message,
 		AuthorName: body.AuthorName,
@@ -62,5 +62,11 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		}, http.StatusInternalServerError)
 	}
 
-	return nil
+	return helpers.CreateResponse(&CreateMessageControllerResponse{
+		Id:         message.Id,
+		ChatId:     message.ChatId,
+		Message:    message.Message,
+		AuthorName: message.AuthorName,
+		AuthorId:   message.AuthorId,
+	}, http.StatusCreated)
 }

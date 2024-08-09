@@ -93,13 +93,6 @@ func TestCreateMessageController(t *testing.T) {
 			AuthorName: "fake-author-name",
 			AuthorId:   "fake-author-id",
 		}
-		// fakeMessage := &models.Message{
-		// 	Id:         "fake-message-id",
-		// 	ChatId:     "fake-chat-id",
-		// 	Message:    "fake-message",
-		// 	AuthorName: "fake-author",
-		// 	AuthorId:   "fake-author-id",
-		// }
 
 		mockCreateMessage.EXPECT().Create(fakeCreateMessageInput).Return(nil, errors.New("fake-error"))
 
@@ -107,5 +100,51 @@ func TestCreateMessageController(t *testing.T) {
 		httpResponse := signUpController.Handle(httpRequest)
 
 		verifyHttpResponse(t, httpResponse, http.StatusInternalServerError, "an error occurred while creating message")
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		signUpController, mockFindChatById, mockCreateMessage, ctrl := setupCreateMessageMocks(t)
+		defer ctrl.Finish()
+
+		fakeChat := &models.Chat{
+			Id:        "fake-chat-id",
+			CreatedAt: time.Now(),
+			OwnerId:   "fake-owner-id",
+		}
+		mockFindChatById.EXPECT().Find("fake-chat-id").Return(fakeChat, nil)
+
+		fakeCreateMessageInput := &usecase.CreateMessageInput{
+			ChatId:     "fake-chat-id",
+			Message:    "fake-message",
+			AuthorName: "fake-author-name",
+			AuthorId:   "fake-author-id",
+		}
+		fakeMessage := &models.Message{
+			Id:         "fake-message-id",
+			ChatId:     "fake-chat-id",
+			Message:    "fake-message",
+			AuthorName: "fake-author",
+			AuthorId:   "fake-author-id",
+		}
+
+		mockCreateMessage.EXPECT().Create(fakeCreateMessageInput).Return(fakeMessage, nil)
+
+		httpRequest := createCreateMessageHttpRequest(t)
+		res := signUpController.Handle(httpRequest)
+
+		var responseBody controllers.CreateMessageControllerResponse
+		err := json.NewDecoder(res.Body).Decode(&responseBody)
+		require.NoError(t, err)
+
+		correctCreateMessageResponse := controllers.CreateMessageControllerResponse{
+			Id:         "fake-message-id",
+			ChatId:     "fake-chat-id",
+			Message:    "fake-message",
+			AuthorName: "fake-author",
+			AuthorId:   "fake-author-id",
+		}
+
+		require.Equal(t, correctCreateMessageResponse, responseBody)
+		require.Equal(t, http.StatusCreated, res.StatusCode)
 	})
 }
