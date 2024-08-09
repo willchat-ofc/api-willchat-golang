@@ -8,22 +8,26 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"github.com/willchat-ofc/api-willchat-golang/internal/domain/models"
+	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 	controllers "github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers/message"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
 )
 
-func setupCreateMessageMocks(t *testing.T) (*controllers.CreateMessageController, *mocks.MockFindChatById, *gomock.Controller) {
+func setupCreateMessageMocks(t *testing.T) (*controllers.CreateMessageController, *mocks.MockFindChatById, *mocks.MockCreateMessage, *gomock.Controller) {
 	ctrl := gomock.NewController(t)
 
 	mockFindChatById := mocks.NewMockFindChatById(ctrl)
+	mockCreateMessage := mocks.NewMockCreateMessage(ctrl)
 
-	sut := controllers.NewCreateMessageController(mockFindChatById)
+	sut := controllers.NewCreateMessageController(mockFindChatById, mockCreateMessage)
 
-	return sut, mockFindChatById, ctrl
+	return sut, mockFindChatById, mockCreateMessage, ctrl
 }
 
 func createCreateMessageHttpRequest(t *testing.T) protocols.HttpRequest {
@@ -47,7 +51,7 @@ func createCreateMessageHttpRequest(t *testing.T) protocols.HttpRequest {
 
 func TestCreateMessageController(t *testing.T) {
 	t.Run("InvalidBodyRequest", func(t *testing.T) {
-		signUpController, _, ctrl := setupCreateMessageMocks(t)
+		signUpController, _, _, ctrl := setupCreateMessageMocks(t)
 		defer ctrl.Finish()
 
 		httpRequest := &protocols.HttpRequest{
@@ -61,7 +65,7 @@ func TestCreateMessageController(t *testing.T) {
 	})
 
 	t.Run("ChatNotFound", func(t *testing.T) {
-		signUpController, mockFindChatById, ctrl := setupCreateMessageMocks(t)
+		signUpController, mockFindChatById, _, ctrl := setupCreateMessageMocks(t)
 		defer ctrl.Finish()
 
 		mockFindChatById.EXPECT().Find("fake-chat-id").Return(nil, errors.New("chat not found"))
@@ -70,5 +74,38 @@ func TestCreateMessageController(t *testing.T) {
 		httpResponse := signUpController.Handle(httpRequest)
 
 		verifyHttpResponse(t, httpResponse, http.StatusNotFound, "chat not found")
+	})
+
+	t.Run("ErrorWhileCreatingMessage", func(t *testing.T) {
+		signUpController, mockFindChatById, mockCreateMessage, ctrl := setupCreateMessageMocks(t)
+		defer ctrl.Finish()
+
+		fakeChat := &models.Chat{
+			Id:        "fake-chat-id",
+			CreatedAt: time.Now(),
+			OwnerId:   "fake-owner-id",
+		}
+		mockFindChatById.EXPECT().Find("fake-chat-id").Return(fakeChat, nil)
+
+		fakeCreateMessageInput := &usecase.CreateMessageInput{
+			ChatId:     "fake-chat-id",
+			Message:    "fake-message",
+			AuthorName: "fake-author-name",
+			AuthorId:   "fake-author-id",
+		}
+		// fakeMessage := &models.Message{
+		// 	Id:         "fake-message-id",
+		// 	ChatId:     "fake-chat-id",
+		// 	Message:    "fake-message",
+		// 	AuthorName: "fake-author",
+		// 	AuthorId:   "fake-author-id",
+		// }
+
+		mockCreateMessage.EXPECT().Create(fakeCreateMessageInput).Return(nil, errors.New("fake-error"))
+
+		httpRequest := createCreateMessageHttpRequest(t)
+		httpResponse := signUpController.Handle(httpRequest)
+
+		verifyHttpResponse(t, httpResponse, http.StatusInternalServerError, "an error occurred while creating message")
 	})
 }

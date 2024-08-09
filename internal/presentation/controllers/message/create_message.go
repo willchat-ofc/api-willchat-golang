@@ -10,12 +10,14 @@ import (
 )
 
 type CreateMessageController struct {
-	findChatById usecase.FindChatById
+	FindChatById  usecase.FindChatById
+	CreateMessage usecase.CreateMessage
 }
 
-func NewCreateMessageController(findChatById usecase.FindChatById) *CreateMessageController {
+func NewCreateMessageController(findChatById usecase.FindChatById, createMessage usecase.CreateMessage) *CreateMessageController {
 	return &CreateMessageController{
-		findChatById: findChatById,
+		FindChatById:  findChatById,
+		CreateMessage: createMessage,
 	}
 }
 
@@ -43,11 +45,23 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		}, http.StatusBadRequest)
 	}
 
-	_, err = c.findChatById.Find(body.ChatId)
+	_, err = c.FindChatById.Find(body.ChatId)
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "chat not found",
 		}, http.StatusNotFound)
+	}
+
+	_, err = c.CreateMessage.Create(&usecase.CreateMessageInput{
+		ChatId:     body.ChatId,
+		Message:    body.Message,
+		AuthorName: body.AuthorName,
+		AuthorId:   body.AuthorId,
+	})
+	if err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "an error occurred while creating message",
+		}, http.StatusInternalServerError)
 	}
 
 	return nil
