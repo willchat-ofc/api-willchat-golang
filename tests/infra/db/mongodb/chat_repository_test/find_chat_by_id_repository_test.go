@@ -11,8 +11,6 @@ import (
 
 func setupFindChatByIdRepositoryMocks(t *testing.T) (*chat_repository.FindChatByIdMongoRepository, *mongo.Database, func()) {
 	db, teardown := helper_test.SetupMongoContainer(t)
-	insertFakeChatsToGet(db)
-
 	sut := chat_repository.NewFindChatByIdMongoRepository(db)
 
 	return sut, db, teardown
@@ -20,12 +18,22 @@ func setupFindChatByIdRepositoryMocks(t *testing.T) (*chat_repository.FindChatBy
 
 func TestFindChatByIdRepositoryMocks(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		sut, _, teardown := setupFindChatByIdRepositoryMocks(t)
+		sut, db, teardown := setupFindChatByIdRepositoryMocks(t)
+		insertFakeChatsToGet(db)
 		defer teardown()
 
 		chat, err := sut.Find("fake-chat-id")
 		require.NoError(t, err)
 		require.Equal(t, "fake-chat-id", chat.Id)
 		require.Equal(t, chat.OwnerId, "fake-owner-id")
+	})
+
+	t.Run("NotFound", func(t *testing.T) {
+		sut, _, teardown := setupFindChatByIdRepositoryMocks(t)
+		defer teardown()
+
+		chat, err := sut.Find("fake-chat-id")
+		require.Error(t, err, "mongo: no documents in result")
+		require.Nil(t, chat)
 	})
 }
