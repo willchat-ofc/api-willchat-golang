@@ -1,12 +1,16 @@
 package controllers_test
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
 	controllers "github.com/willchat-ofc/api-willchat-golang/internal/presentation/controllers/message"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
@@ -22,24 +26,24 @@ func setupCreateMessageMocks(t *testing.T) (*controllers.CreateMessageController
 	return sut, mockFindChatById, ctrl
 }
 
-// func createCreateMessageHttpRequest(t *testing.T) protocols.HttpRequest {
-// 	var requestBody bytes.Buffer
-// 	err := json.NewEncoder(&requestBody).Encode(&controllers.CreateMessageControllerBody{
-// 		ChatId:     "fake-chat-id",
-// 		Message:    "fake-message",
-// 		AuthorName: "fake-author-name",
-// 		AuthorId:   "fake-author-id",
-// 	})
-// 	require.NoError(t, err)
+func createCreateMessageHttpRequest(t *testing.T) protocols.HttpRequest {
+	var requestBody bytes.Buffer
+	err := json.NewEncoder(&requestBody).Encode(&controllers.CreateMessageControllerBody{
+		ChatId:     "fake-chat-id",
+		Message:    "fake-message",
+		AuthorName: "fake-author-name",
+		AuthorId:   "fake-author-id",
+	})
+	require.NoError(t, err)
 
-// 	header := http.Header{}
-// 	header.Add("UserId", "fake-user-id")
+	header := http.Header{}
+	header.Add("UserId", "fake-user-id")
 
-// 	return protocols.HttpRequest{
-// 		Body:   io.NopCloser(&requestBody),
-// 		Header: header,
-// 	}
-// }
+	return protocols.HttpRequest{
+		Body:   io.NopCloser(&requestBody),
+		Header: header,
+	}
+}
 
 func TestCreateMessageController(t *testing.T) {
 	t.Run("InvalidBodyRequest", func(t *testing.T) {
@@ -54,5 +58,17 @@ func TestCreateMessageController(t *testing.T) {
 		httpResponse := signUpController.Handle(*httpRequest)
 
 		verifyHttpResponse(t, httpResponse, http.StatusBadRequest, "invalid body request")
+	})
+
+	t.Run("ChatNotFound", func(t *testing.T) {
+		signUpController, mockFindChatById, ctrl := setupCreateMessageMocks(t)
+		defer ctrl.Finish()
+
+		mockFindChatById.EXPECT().Find("fake-chat-id").Return(nil, errors.New("chat not found"))
+
+		httpRequest := createCreateMessageHttpRequest(t)
+		httpResponse := signUpController.Handle(httpRequest)
+
+		verifyHttpResponse(t, httpResponse, http.StatusNotFound, "chat not found")
 	})
 }

@@ -43,5 +43,12 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		}, http.StatusBadRequest)
 	}
 
+	_, err = c.findChatById.Find(body.ChatId)
+	if err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "chat not found",
+		}, http.StatusNotFound)
+	}
+
 	return nil
 }
