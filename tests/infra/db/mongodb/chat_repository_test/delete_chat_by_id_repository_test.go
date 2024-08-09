@@ -3,7 +3,6 @@ package chat_repository
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/models"
@@ -20,16 +19,6 @@ func setupDeleteChatByIdRepositoryMocks(t *testing.T) (*chat_repository.DeleteCh
 	sut := chat_repository.NewDeleteChatByIdMongoRepository(db)
 
 	return sut, db, teardown
-}
-
-func insertFakeChatsToGet(db *mongo.Database) {
-	collection := db.Collection("chat")
-	fakeChat := &models.Chat{
-		Id:        "fake-chat-id",
-		CreatedAt: time.Now(),
-		OwnerId:   "fake-owner-id",
-	}
-	collection.InsertOne(context.TODO(), fakeChat)
 }
 
 func TestDeleteChatByIdRepository(t *testing.T) {
