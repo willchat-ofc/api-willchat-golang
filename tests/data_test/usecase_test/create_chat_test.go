@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/willchat-ofc/api-willchat-golang/internal/data/protocols"
-	"github.com/willchat-ofc/api-willchat-golang/internal/data/usecase"
+	usecase "github.com/willchat-ofc/api-willchat-golang/internal/data/usecase/chat"
 	"github.com/willchat-ofc/api-willchat-golang/tests/mocks"
 
 	domainUsecase "github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
