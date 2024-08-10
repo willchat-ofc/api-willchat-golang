@@ -2,6 +2,8 @@ package helper_test
 
 import (
 	"context"
+	"io"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,6 +15,7 @@ import (
 
 func SetupMongoContainer(t *testing.T) (*mongo.Database, func()) {
 	ctx := context.Background()
+	testcontainers.Logger = log.New(io.Discard, "", 0)
 
 	req := testcontainers.ContainerRequest{
 		Image:        "mongo:4.4.6",
