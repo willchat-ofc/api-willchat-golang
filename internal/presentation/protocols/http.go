@@ -10,6 +10,7 @@ type HttpRequest struct {
 	Body      io.ReadCloser
 	Header    http.Header
 	UrlParams url.Values
+	UrlPath   string
 }
 
 type HttpResponse struct {

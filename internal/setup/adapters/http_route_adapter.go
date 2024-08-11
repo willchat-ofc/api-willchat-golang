@@ -13,6 +13,7 @@ func AdaptRoute(controller protocols.Controller) http.Handler {
 			Body:      r.Body,
 			Header:    r.Header,
 			UrlParams: r.URL.Query(),
+			UrlPath:   r.URL.Path,
 		}
 
 		res := controller.Handle(*httpRequest)
