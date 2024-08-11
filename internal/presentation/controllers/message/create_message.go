@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 	"github.com/willchat-ofc/api-willchat-golang/internal/presentation/helpers"
 	presentationProtocols "github.com/willchat-ofc/api-willchat-golang/internal/presentation/protocols"
@@ -12,12 +13,16 @@ import (
 type CreateMessageController struct {
 	FindChatById  usecase.FindChatById
 	CreateMessage usecase.CreateMessage
+	Validate      *validator.Validate
 }
 
 func NewCreateMessageController(findChatById usecase.FindChatById, createMessage usecase.CreateMessage) *CreateMessageController {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
 	return &CreateMessageController{
 		FindChatById:  findChatById,
 		CreateMessage: createMessage,
+		Validate:      validate,
 	}
 }
 
@@ -30,10 +35,10 @@ type CreateMessageControllerResponse struct {
 }
 
 type CreateMessageControllerBody struct {
-	ChatId     string `json:"chatId"`
-	Message    string `json:"message"`
-	AuthorName string `json:"authorName"`
-	AuthorId   string `json:"authorId"`
+	ChatId     string `validate:"uuid,required"`
+	Message    string `validate:"min=1,max=400,required"`
+	AuthorName string `validate:"min=4,max=50,required"`
+	AuthorId   string
 }
 
 func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
@@ -42,6 +47,12 @@ func (c *CreateMessageController) Handle(r presentationProtocols.HttpRequest) *p
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "invalid body request",
 		}, http.StatusBadRequest)
+	}
+
+	if err := c.Validate.Struct(body); err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: err.Error(),
+		}, http.StatusUnprocessableEntity)
 	}
 
 	if _, err := c.FindChatById.Find(body.ChatId); err != nil {
