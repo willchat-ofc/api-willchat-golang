@@ -9,5 +9,5 @@ import (
 )
 
 func FindMessagesByChatId(server *http.ServeMux, db *mongo.Database) {
-	server.Handle("/message/", adapters.AdaptRoute(factory.MakeFindMessagesByChatIdController()))
+	server.Handle("/message/", adapters.AdaptRoute(factory.MakeFindMessagesByChatIdController(db)))
 }

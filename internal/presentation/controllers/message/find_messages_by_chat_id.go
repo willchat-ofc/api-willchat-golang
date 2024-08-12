@@ -29,5 +29,5 @@ func (c *FindMessagesByChatIdController) Handle(r presentationProtocols.HttpRequ
 		}, http.StatusInternalServerError)
 	}
 
-	return helpers.CreateResponse(chats, http.StatusInternalServerError)
+	return helpers.CreateResponse(chats, http.StatusOK)
 }
