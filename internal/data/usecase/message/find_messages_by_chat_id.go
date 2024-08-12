@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/willchat-ofc/api-willchat-golang/internal/data/protocols"
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/models"
+	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
 )
 
 type DbFindMessagesByChatId struct {
@@ -15,6 +16,10 @@ func NewDbFindMessagesByChatId(findMessagesByChatIdRepository protocols.FindMess
 	}
 }
 
-func (c *DbFindMessagesByChatId) Find(chatId string) ([]*models.Message, error) {
-	return c.FindMessagesByChatIdRepository.Find(chatId)
+func (c *DbFindMessagesByChatId) Find(data *usecase.FindMessagesByChatIdInput) ([]*models.Message, error) {
+	return c.FindMessagesByChatIdRepository.Find(&protocols.FindMessagesByChatIdRepositoryInput{
+		ChatId: data.ChatId,
+		Limit:  data.Limit,
+		Offset: data.Offset,
+	})
 }
