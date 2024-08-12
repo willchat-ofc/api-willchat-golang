@@ -22,14 +22,25 @@ func NewFindMessagesByChatIdController(findMessagesByChatId usecase.FindMessages
 
 func (c *FindMessagesByChatIdController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
 	id := strings.TrimPrefix(r.UrlPath, "/message/")
-	limit, err := strconv.Atoi(r.Header.Get("limit"))
+
+	limitStr := r.Header.Get("limit")
+	if limitStr == "" {
+		limitStr = "0"
+	}
+
+	limit, err := strconv.Atoi(limitStr)
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "cannot parse limit",
 		}, http.StatusBadRequest)
 	}
 
-	offset, err := strconv.Atoi(r.Header.Get("offset"))
+	offsetStr := r.Header.Get("offset")
+	if offsetStr == "" {
+		offsetStr = "0"
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "cannot parse offset",

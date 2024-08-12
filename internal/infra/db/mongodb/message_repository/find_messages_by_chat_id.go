@@ -26,8 +26,12 @@ func (c *FindMessagesByChatIdMongoRepository) Find(data *protocols.FindMessagesB
 	filter := bson.D{{Key: "chat_id", Value: data.ChatId}}
 
 	options := new(options.FindOptions)
-	options.SetSkip(int64(data.Offset))
-	options.SetLimit(int64(data.Limit))
+
+	if data.Limit > 0 {
+		options.SetSkip(int64(data.Offset))
+		options.SetLimit(int64(data.Limit))
+	}
+
 	cursor, err := collection.Find(context.TODO(), filter, options)
 
 	if err != nil {
