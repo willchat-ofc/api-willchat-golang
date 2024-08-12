@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/usecase"
@@ -21,8 +22,26 @@ func NewFindMessagesByChatIdController(findMessagesByChatId usecase.FindMessages
 
 func (c *FindMessagesByChatIdController) Handle(r presentationProtocols.HttpRequest) *presentationProtocols.HttpResponse {
 	id := strings.TrimPrefix(r.UrlPath, "/message/")
+	limit, err := strconv.Atoi(r.Header.Get("limit"))
+	if err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "cannot parse limit",
+		}, http.StatusBadRequest)
+	}
 
-	chats, err := c.FindMessagesByChatId.Find(id)
+	offset, err := strconv.Atoi(r.Header.Get("offset"))
+	if err != nil {
+		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
+			Error: "cannot parse offset",
+		}, http.StatusBadRequest)
+	}
+
+	input := &usecase.FindMessagesByChatIdInput{
+		ChatId: id,
+		Limit:  limit,
+		Offset: offset,
+	}
+	chats, err := c.FindMessagesByChatId.Find(input)
 	if err != nil {
 		return helpers.CreateResponse(&presentationProtocols.ErrorResponse{
 			Error: "chat not found",

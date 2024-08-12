@@ -6,6 +6,7 @@ import (
 	"github.com/willchat-ofc/api-willchat-golang/internal/domain/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type FindMessagesByChatIdMongoRepository struct {
@@ -23,7 +24,10 @@ func (c *FindMessagesByChatIdMongoRepository) Find(chatId string) ([]*models.Mes
 
 	filter := bson.D{{Key: "chat_id", Value: chatId}}
 
-	cursor, err := collection.Find(context.TODO(), filter)
+	options := new(options.FindOptions)
+	options.SetSkip(10)
+	options.SetLimit(10)
+	cursor, err := collection.Find(context.TODO(), filter, options)
 
 	if err != nil {
 		return nil, err
