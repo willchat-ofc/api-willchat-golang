@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -11,7 +12,7 @@ import (
 var Ctx = context.TODO()
 
 func MongoHelper() *mongo.Database {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URL"))
 	client, err := mongo.Connect(Ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
